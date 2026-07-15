@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>水晶藏寶箱</title>
+<meta name="description" content="水晶家族圖鑑與我的藏寶箱收藏紀錄">
+<meta name="theme-color" content="#1b1420">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="水晶藏寶箱">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#1b1420;
+  --surface:#241c2c;
+  --surface2:#2f2538;
+  --border:#3d3048;
+  --text:#f3eee8;
+  --text-muted:#b3a4be;
+  --amethyst:#a98fe0;
+  --rose:#e7a8c4;
+  --citrine:#e4c468;
+  --danger:#d97878;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter','Noto Serif TC',sans-serif;
+  background:radial-gradient(ellipse at top, #2a2033 0%, #1b1420 55%);
+  color:var(--text);
+  min-height:100vh;
+}
+.root{padding:28px 20px 60px;}
+
+.masthead{text-align:center;margin-bottom:24px;}
+.masthead h1{
+  font-family:'Cinzel','Noto Serif TC',serif;
+  font-weight:700;
+  font-size:clamp(26px,4vw,38px);
+  letter-spacing:1px;
+  margin:0 0 6px;
+  background:linear-gradient(120deg,var(--amethyst),var(--rose) 50%,var(--citrine));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.masthead p{color:var(--text-muted);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0;}
+
+.main-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+.main-tab-btn{
+  font-family:'Cinzel','Noto Serif TC',serif;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text-muted);
+  padding:12px 26px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:15px;
+  letter-spacing:1px;
+  transition:.2s;
+}
+.main-tab-btn:hover{color:var(--text);border-color:var(--amethyst);}
+.main-tab-btn.active{
+  background:linear-gradient(120deg,var(--amethyst),var(--rose));
+  color:#1b1420;
+  border-color:transparent;
+  font-weight:600;
+}
+
+.panel{display:none;max-width:1100px;margin:0 auto;}
+.panel.active{display:block;}
+
+.panel-head{
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;
+  margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:14px;
+}
+.panel-head h2{font-family:'Cinzel','Noto Serif TC',serif;margin:0 0 4px;font-size:22px;letter-spacing:1px;}
+.panel-head .desc{color:var(--text-muted);font-size:13px;}
+.stats{display:flex;gap:18px;font-size:13px;color:var(--text-muted);}
+.stats b{color:var(--citrine);font-weight:600;}
+
+.add-btn{
+  background:var(--surface2);border:1px solid var(--amethyst);color:var(--amethyst);
+  padding:9px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;
+  white-space:nowrap;transition:.2s;
+}
+.add-btn:hover{background:var(--amethyst);color:#1b1420;}
+
+/* category pills for 我的藏寶箱 */
+.cat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+.cat-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-muted);
+  padding:7px 8px 7px 16px;border-radius:999px;cursor:pointer;font-size:13.5px;transition:.15s;
+}
+.cat-pill.active{border-color:var(--rose);color:var(--rose);background:var(--surface2);}
+.cat-pill .cat-edit{
+  width:20px;height:20px;border-radius:50%;border:none;background:transparent;color:var(--text-muted);
+  font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.cat-pill .cat-edit:hover{color:var(--text);}
+.cat-add-pill{
+  background:transparent;border:1px dashed var(--border);color:var(--text-muted);
+  padding:7px 16px;border-radius:999px;cursor:pointer;font-size:13.5px;
+}
+.cat-add-pill:hover{border-color:var(--amethyst);color:var(--amethyst);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:14px;position:relative;transition:.2s;
+}
+.card:hover{border-color:var(--amethyst);transform:translateY(-2px);}
+
+.card-photo{
+  width:100%;aspect-ratio:1/1;object-fit:cover;
+  clip-path:polygon(8% 0%,92% 0%,100% 15%,100% 85%,92% 100%,8% 100%,0% 85%,0% 15%);
+  background:var(--surface2);margin-bottom:10px;display:block;
+}
+.card-photo.placeholder{display:flex;align-items:center;justify-content:center;color:var(--border);font-size:32px;}
+.card h3{font-family:'Noto Serif TC',serif;font-size:16px;margin:0 0 6px;color:var(--text);}
+.card .row{font-size:12.5px;color:var(--text-muted);margin:2px 0;}
+.card .row b{color:var(--citrine);font-weight:600;}
+.card-actions{position:absolute;top:10px;right:10px;display:flex;gap:6px;}
+.icon-btn{
+  background:rgba(27,20,32,.75);border:1px solid var(--border);color:var(--text-muted);
+  width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--amethyst);}
+.icon-btn.del:hover{color:var(--danger);border-color:var(--danger);}
+
+.empty{
+  text-align:center;padding:50px 20px;color:var(--text-muted);
+  border:1px dashed var(--border);border-radius:12px;font-size:14px;
+}
+.empty .add-btn{margin-top:14px;}
+
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(10,7,13,.7);
+  backdrop-filter:blur(3px);align-items:center;justify-content:center;z-index:50;padding:20px;
+}
+.overlay.active{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:26px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;
+}
+.modal h3{font-family:'Cinzel','Noto Serif TC',serif;margin:0 0 18px;font-size:18px;letter-spacing:1px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12.5px;color:var(--text-muted);margin-bottom:6px;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:9px 11px;color:var(--text);font-family:inherit;font-size:14px;
+}
+.field textarea{resize:vertical;min-height:64px;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--amethyst);}
+.photo-preview{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:14px;}
+.btn.primary{background:linear-gradient(120deg,var(--amethyst),var(--rose));color:#1b1420;}
+.btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--surface2);border:1px solid var(--amethyst);
+  padding:10px 20px;border-radius:8px;font-size:13px;
+  opacity:0;pointer-events:none;transition:.3s;z-index:60;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+.loading{text-align:center;padding:40px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<div class="root">
+  <div class="masthead">
+    <h1>水晶藏寶箱</h1>
+    <p>Crystal Family & My Treasure Box</p>
+  </div>
+
+  <div class="main-tabs">
+    <button class="main-tab-btn active" data-tab="family">水晶家族</button>
+    <button class="main-tab-btn" data-tab="box">我的藏寶箱</button>
+  </div>
+
+  <div id="loading" class="loading">載入收藏資料中…</div>
+  <div id="panels" style="display:none;"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- local storage layer (IndexedDB) ---------- */
+const DB_NAME = 'crystalTreasureBoxDB';
+const STORE = 'kv';
+function openDB(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function loadKey(key){
+  try{
+    const db = await openDB();
+    return await new Promise((resolve, reject)=>{
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(key);
+      req.onsuccess = () => resolve(req.result ? JSON.parse(req.result) : []);
+      req.onerror = () => reject(req.error);
+    });
+  }catch(e){ return []; }
+}
+async function saveKey(key, arr){
+  try{
+    const db = await openDB();
+    await new Promise((resolve, reject)=>{
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(JSON.stringify(arr), key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }catch(e){ toast('儲存失敗，請再試一次'); }
+}
+
+/* ---------- app state ---------- */
+// db.family: [{id,name,sciName,origin,func}]
+// db.categories: [{id,name}]  -- user-defined categories in 我的藏寶箱
+// db.items: [{id,categoryId,type,date,price,size,photo}]
+let db = { family:[], categories:[], items:[] };
+let currentMain = 'family';
+let currentCategory = null;
+let editing = null;
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function fmtMoney(n){ if(n===undefined||n===null||n==='') return '—'; return 'NT$ '+Number(n).toLocaleString(); }
+function fmtDate(d){ return d || '—'; }
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+async function init(){
+  const [family, categories, items] = await Promise.all([
+    loadKey('family'), loadKey('categories'), loadKey('items')
+  ]);
+  db = { family, categories, items };
+  if(db.categories.length) currentCategory = db.categories[0].id;
+  document.getElementById('loading').style.display='none';
+  document.getElementById('panels').style.display='block';
+  renderAll();
+}
+
+document.querySelectorAll('.main-tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.main-tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMain = btn.dataset.tab;
+    renderAll();
+  });
+});
+
+function renderAll(){
+  const panels = document.getElementById('panels');
+  panels.innerHTML = `
+    <div class="panel ${currentMain==='family'?'active':''}" id="panel-family">${renderFamily()}</div>
+    <div class="panel ${currentMain==='box'?'active':''}" id="panel-box">${renderBox()}</div>
+  `;
+}
+
+/* ---------- 水晶家族 ---------- */
+function renderFamily(){
+  const items = db.family;
+  const cards = items.length ? `<div class="grid">${items.map(cardFamily).join('')}</div>`
+    : `<div class="empty">還沒有水晶家族資料，點右上角「新增」開始建立水晶圖鑑。</div>`;
+  return `
+    <div class="panel-head">
+      <div><h2>水晶家族</h2><div class="desc">名稱・學名・產地・功能</div></div>
+      <button class="add-btn" onclick="openForm('family')">＋ 新增水晶</button>
+    </div>
+    ${cards}
+  `;
+}
+function cardFamily(it){
+  return `
+    <div class="card">
+      <div class="card-actions">
+        <button class="icon-btn" onclick="openForm('family','${it.id}')">✎</button>
+        <button class="icon-btn del" onclick="removeItem('family','${it.id}')">✕</button>
+      </div>
+      <h3>${esc(it.name)}</h3>
+      <div class="row">學名：${esc(it.sciName)||'—'}</div>
+      <div class="row">產地：${esc(it.origin)||'—'}</div>
+      <div class="row">功能：${esc(it.func)||'—'}</div>
+    </div>`;
+}
+
+/* ---------- 我的藏寶箱 ---------- */
+function renderBox(){
+  if(db.categories.length===0){
+    return `
+      <div class="panel-head">
+        <div><h2>我的藏寶箱</h2><div class="desc">自訂分類，收藏你的水晶寶物</div></div>
+      </div>
+      <div class="empty">
+        還沒有任何分類，先建立第一個分類吧（例如：手鍊、擺件、龍宮舍利…）。
+        <div><button class="add-btn" onclick="addCategory()">＋ 建立第一個分類</button></div>
+      </div>
+    `;
+  }
+  if(!currentCategory || !db.categories.find(c=>c.id===currentCategory)){
+    currentCategory = db.categories[0].id;
+  }
+  const cat = db.categories.find(c=>c.id===currentCategory);
+  const catItems = db.items.filter(it=>it.categoryId===currentCategory);
+  const total = catItems.reduce((s,it)=>s+(Number(it.price)||0),0);
+
+  const pills = db.categories.map(c=>`
+    <div class="cat-pill ${c.id===currentCategory?'active':''}" onclick="setCategory('${c.id}')">
+      <span>${esc(c.name)}</span>
+      <button class="cat-edit" onclick="event.stopPropagation();renameCategory('${c.id}')" title="重新命名">✎</button>
+      <button class="cat-edit" onclick="event.stopPropagation();deleteCategory('${c.id}')" title="刪除分類">✕</button>
+    </div>
+  `).join('');
+
+  const cards = catItems.length ? `<div class="grid">${catItems.map(cardBoxItem).join('')}</div>`
+    : `<div class="empty">「${esc(cat.name)}」還沒有任何項目，點右上角「新增」開始收藏。</div>`;
+
+  return `
+    <div class="panel-head">
+      <div><h2>我的藏寶箱</h2><div class="desc">自訂分類，收藏你的水晶寶物</div></div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="stats"><span>「${esc(cat.name)}」共 <b>${catItems.length}</b> 件</span><span>小計 <b>${fmtMoney(total)}</b></span></div>
+        <button class="add-btn" onclick="openForm('item')">＋ 新增項目</button>
+      </div>
+    </div>
+    <div class="cat-row">
+      ${pills}
+      <button class="cat-add-pill" onclick="addCategory()">＋ 新增分類</button>
+    </div>
+    ${cards}
+  `;
+}
+function cardBoxItem(it){
+  const photo = it.photo
+    ? `<img class="card-photo" src="${it.photo}">`
+    : `<div class="card-photo placeholder">◇</div>`;
+  return `
+    <div class="card">
+      <div class="card-actions">
+        <button class="icon-btn" onclick="openForm('item','${it.id}')">✎</button>
+        <button class="icon-btn del" onclick="removeItem('item','${it.id}')">✕</button>
+      </div>
+      ${photo}
+      <h3>${esc(it.type)}</h3>
+      <div class="row">購買日期：${fmtDate(it.date)}</div>
+      <div class="row">購買金額：<b>${fmtMoney(it.price)}</b></div>
+      <div class="row">大小／形狀：${esc(it.size)||'—'}</div>
+    </div>`;
+}
+
+async function addCategory(){
+  const name = prompt('新分類名稱：');
+  if(!name || !name.trim()) return;
+  const cat = { id: uid(), name: name.trim() };
+  db.categories.push(cat);
+  await saveKey('categories', db.categories);
+  currentCategory = cat.id;
+  renderAll();
+  toast('已建立分類');
+}
+async function renameCategory(id){
+  const cat = db.categories.find(c=>c.id===id);
+  const name = prompt('重新命名分類：', cat.name);
+  if(!name || !name.trim()) return;
+  cat.name = name.trim();
+  await saveKey('categories', db.categories);
+  renderAll();
+  toast('已更新分類名稱');
+}
+async function deleteCategory(id){
+  const cat = db.categories.find(c=>c.id===id);
+  const count = db.items.filter(it=>it.categoryId===id).length;
+  const msg = count>0
+    ? `確定要刪除分類「${cat.name}」嗎？裡面的 ${count} 件項目也會一併刪除。`
+    : `確定要刪除分類「${cat.name}」嗎？`;
+  if(!confirm(msg)) return;
+  db.categories = db.categories.filter(c=>c.id!==id);
+  db.items = db.items.filter(it=>it.categoryId!==id);
+  await Promise.all([saveKey('categories', db.categories), saveKey('items', db.items)]);
+  currentCategory = db.categories.length ? db.categories[0].id : null;
+  renderAll();
+  toast('已刪除分類');
+}
+function setCategory(id){ currentCategory = id; renderAll(); }
+
+/* ---------- forms ---------- */
+const SCHEMAS = {
+  family: {
+    title: {add:'新增水晶', edit:'編輯水晶'},
+    fields: [
+      {key:'name', label:'水晶名稱', type:'text', required:true},
+      {key:'sciName', label:'學名', type:'text'},
+      {key:'origin', label:'產地', type:'text'},
+      {key:'func', label:'功能／功效', type:'textarea'}
+    ]
+  },
+  item: {
+    title: {add:'新增藏寶箱項目', edit:'編輯項目'},
+    fields: [
+      {key:'photo', label:'照片', type:'photo'},
+      {key:'type', label:'水晶種類', type:'text', required:true},
+      {key:'date', label:'購買日期', type:'date'},
+      {key:'price', label:'購買金額', type:'number'},
+      {key:'size', label:'水晶大小／形狀', type:'text'}
+    ]
+  }
+};
+
+let pendingPhoto = null;
+
+function openForm(section, id){
+  editing = { section, id: id||null };
+  const schema = SCHEMAS[section];
+  const listKey = section==='family' ? 'family' : 'items';
+  const item = id ? db[listKey].find(x=>x.id===id) : {};
+  pendingPhoto = item && item.photo ? item.photo : null;
+
+  const fieldsHtml = schema.fields.map(f=>{
+    const val = item ? (item[f.key] ?? '') : '';
+    if(f.type==='textarea'){
+      return `<div class="field"><label>${f.label}</label><textarea data-key="${f.key}">${esc(val)}</textarea></div>`;
+    }
+    if(f.type==='photo'){
+      const preview = pendingPhoto ? `style="display:block" src="${pendingPhoto}"` : `style="display:none"`;
+      return `<div class="field"><label>${f.label}</label>
+        <input type="file" accept="image/*" data-key="photo" onchange="handlePhoto(event)">
+        <img id="photoPreview" class="photo-preview" ${preview}>
+      </div>`;
+    }
+    return `<div class="field"><label>${f.label}</label><input type="${f.type}" data-key="${f.key}" value="${esc(val)}" ${f.required?'required':''}></div>`;
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <h3>${id?schema.title.edit:schema.title.add}</h3>
+    <div id="formFields">${fieldsHtml}</div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeForm()">取消</button>
+      <button class="btn primary" onclick="submitForm()">儲存</button>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('active');
+}
+function closeForm(){
+  document.getElementById('overlay').classList.remove('active');
+  pendingPhoto = null;
+  editing = null;
+}
+
+function handlePhoto(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    img.onload = function(){
+      const maxW = 640;
+      const scale = Math.min(1, maxW/img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width*scale;
+      canvas.height = img.height*scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      pendingPhoto = canvas.toDataURL('image/jpeg', 0.65);
+      const prev = document.getElementById('photoPreview');
+      prev.src = pendingPhoto;
+      prev.style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitForm(){
+  const { section, id } = editing;
+  const schema = SCHEMAS[section];
+  const listKey = section==='family' ? 'family' : 'items';
+  const fields = document.querySelectorAll('#formFields [data-key]');
+  const data = {};
+  let missingRequired = false;
+  fields.forEach(f=>{
+    if(f.dataset.key==='photo') return;
+    data[f.dataset.key] = f.value;
+  });
+  schema.fields.filter(f=>f.required).forEach(f=>{
+    if(!data[f.key] || !data[f.key].trim()) missingRequired = true;
+  });
+  if(missingRequired){ toast('請填寫必填欄位'); return; }
+  if(schema.fields.some(f=>f.type==='photo')){ data.photo = pendingPhoto || null; }
+  if(section==='item' && !id){ data.categoryId = currentCategory; }
+
+  if(id){
+    const idx = db[listKey].findIndex(x=>x.id===id);
+    db[listKey][idx] = { ...db[listKey][idx], ...data };
+  } else {
+    data.id = uid();
+    db[listKey].push(data);
+  }
+  await saveKey(listKey, db[listKey]);
+  closeForm();
+  renderAll();
+  toast('已儲存');
+}
+
+async function removeItem(section, id){
+  if(!confirm('確定要刪除這筆紀錄嗎？')) return;
+  const listKey = section==='family' ? 'family' : 'items';
+  db[listKey] = db[listKey].filter(x=>x.id!==id);
+  await saveKey(listKey, db[listKey]);
+  renderAll();
+  toast('已刪除');
+}
+
+function esc(s){
+  if(s===undefined||s===null) return '';
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+init();
+
+/* ---------- PWA service worker registration ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
