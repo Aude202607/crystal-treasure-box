@@ -16,23 +16,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#1b1420;
-  --surface:#241c2c;
-  --surface2:#2f2538;
-  --border:#3d3048;
-  --text:#f3eee8;
-  --text-muted:#b3a4be;
-  --amethyst:#a98fe0;
-  --rose:#e7a8c4;
-  --citrine:#e4c468;
-  --danger:#d97878;
+  --bg:#0d1e1c;
+  --surface:#153029;
+  --surface2:#1c3d34;
+  --border:#2b4d44;
+  --text:#eaf5f0;
+  --text-muted:#8fb3a8;
+  --amethyst:#2f9e8e;
+  --rose:#5fc9c0;
+  --citrine:#8be6c9;
+  --danger:#e08a7a;
 }
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   font-family:'Inter','Noto Serif TC',sans-serif;
-  background:radial-gradient(ellipse at top, #2a2033 0%, #1b1420 55%);
+  background:radial-gradient(ellipse at top, #163732 0%, #0d1e1c 55%);
   color:var(--text);
   min-height:100vh;
 }
@@ -92,24 +92,52 @@ body{
 }
 .add-btn:hover{background:var(--amethyst);color:#1b1420;}
 
-/* category pills for 我的藏寶箱 */
-.cat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
-.cat-pill{
-  display:flex;align-items:center;gap:6px;
-  background:var(--surface);border:1px solid var(--border);color:var(--text-muted);
-  padding:7px 8px 7px 16px;border-radius:999px;cursor:pointer;font-size:13.5px;transition:.15s;
+/* browser-tab style category selector for 我的藏寶箱 */
+.cat-tabstrip{margin-bottom:0;}
+.cat-tabs{
+  display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px;
+  position:relative;z-index:1;
 }
-.cat-pill.active{border-color:var(--rose);color:var(--rose);background:var(--surface2);}
-.cat-pill .cat-edit{
-  width:20px;height:20px;border-radius:50%;border:none;background:transparent;color:var(--text-muted);
+.cat-tab{
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-bottom:none;
+  border-radius:10px 10px 0 0;
+  padding:10px 10px 10px 16px;
+  color:var(--text-muted);
+  cursor:pointer;
+  font-size:13.5px;
+  transition:.15s;
+}
+.cat-tab:hover{color:var(--text);}
+.cat-tab.active{
+  background:var(--surface);
+  color:var(--text);
+  border-color:var(--amethyst);
+  border-bottom:1px solid var(--surface);
+  margin-bottom:-1px;
+  font-weight:600;
+}
+.cat-tab .cat-edit{
+  width:20px;height:20px;border-radius:5px;border:none;background:transparent;color:var(--text-muted);
   font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
-.cat-pill .cat-edit:hover{color:var(--text);}
-.cat-add-pill{
-  background:transparent;border:1px dashed var(--border);color:var(--text-muted);
-  padding:7px 16px;border-radius:999px;cursor:pointer;font-size:13.5px;
+.cat-tab .cat-edit:hover{color:var(--text);background:rgba(255,255,255,.08);}
+.cat-tab-add{
+  background:transparent;border:1px dashed var(--border);border-bottom:1px dashed var(--border);
+  color:var(--text-muted);border-radius:10px 10px 0 0;
+  padding:10px 16px;cursor:pointer;font-size:13.5px;align-self:flex-end;
 }
-.cat-add-pill:hover{border-color:var(--amethyst);color:var(--amethyst);}
+.cat-tab-add:hover{border-color:var(--amethyst);color:var(--amethyst);}
+.cat-tab-panel{
+  border:1px solid var(--border);
+  border-top:2px solid var(--amethyst);
+  border-radius:0 10px 10px 10px;
+  background:var(--surface);
+  padding:20px;
+  margin-bottom:20px;
+}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
 .card{
@@ -117,6 +145,21 @@ body{
   padding:14px;position:relative;transition:.2s;
 }
 .card:hover{border-color:var(--amethyst);transform:translateY(-2px);}
+
+.card.selected{border-color:var(--amethyst);box-shadow:0 0 0 1px var(--amethyst) inset;}
+.card-select{
+  position:absolute;top:10px;left:10px;z-index:2;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+}
+.card-select input{width:18px;height:18px;accent-color:var(--amethyst);cursor:pointer;}
+.select-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;}
+.link-btn{
+  background:transparent;border:none;color:var(--rose);cursor:pointer;font-size:12.5px;
+  padding:0;text-decoration:underline;text-underline-offset:2px;
+}
+.link-btn:hover{color:var(--text);}
+.sel-total{color:var(--text-muted);}
+.sel-total b{color:var(--citrine);font-weight:600;}
 
 .card-photo{
   width:100%;aspect-ratio:1/1;object-fit:cover;
@@ -240,6 +283,7 @@ let db = { family:[], categories:[], items:[] };
 let currentMain = 'family';
 let currentCategory = null;
 let editing = null;
+let selectedIds = new Set();
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function fmtMoney(n){ if(n===undefined||n===null||n==='') return '—'; return 'NT$ '+Number(n).toLocaleString(); }
@@ -323,10 +367,11 @@ function renderBox(){
   }
   const cat = db.categories.find(c=>c.id===currentCategory);
   const catItems = db.items.filter(it=>it.categoryId===currentCategory);
-  const total = catItems.reduce((s,it)=>s+(Number(it.price)||0),0);
+  const selected = catItems.filter(it=>selectedIds.has(it.id));
+  const selTotal = selected.reduce((s,it)=>s+(Number(it.price)||0),0);
 
-  const pills = db.categories.map(c=>`
-    <div class="cat-pill ${c.id===currentCategory?'active':''}" onclick="setCategory('${c.id}')">
+  const tabs = db.categories.map(c=>`
+    <div class="cat-tab ${c.id===currentCategory?'active':''}" onclick="setCategory('${c.id}')">
       <span>${esc(c.name)}</span>
       <button class="cat-edit" onclick="event.stopPropagation();renameCategory('${c.id}')" title="重新命名">✎</button>
       <button class="cat-edit" onclick="event.stopPropagation();deleteCategory('${c.id}')" title="刪除分類">✕</button>
@@ -339,24 +384,47 @@ function renderBox(){
   return `
     <div class="panel-head">
       <div><h2>我的藏寶箱</h2><div class="desc">自訂分類，收藏你的水晶寶物</div></div>
-      <div style="display:flex;align-items:center;gap:16px;">
-        <div class="stats"><span>「${esc(cat.name)}」共 <b>${catItems.length}</b> 件</span><span>小計 <b>${fmtMoney(total)}</b></span></div>
-        <button class="add-btn" onclick="openForm('item')">＋ 新增項目</button>
+    </div>
+    <div class="cat-tabstrip">
+      <div class="cat-tabs">
+        ${tabs}
+        <button class="cat-tab-add" onclick="addCategory()">＋ 新增分頁</button>
+      </div>
+      <div class="cat-tab-panel">
+        <div class="panel-head" style="border-bottom:none;margin-bottom:14px;padding-bottom:0;">
+          <div><div class="stats"><span>「${esc(cat.name)}」共 <b>${catItems.length}</b> 件</span></div>
+            ${catItems.length ? `<div class="select-toolbar">
+              <button class="link-btn" onclick="selectAllInCategory()">全選</button>
+              <button class="link-btn" onclick="clearSelection()">清除選取</button>
+              <span class="sel-total">已選 <b>${selected.length}</b> 件・金額 <b>${fmtMoney(selTotal)}</b></span>
+            </div>` : ''}
+          </div>
+          <button class="add-btn" onclick="openForm('item')">＋ 新增項目</button>
+        </div>
+        ${cards}
       </div>
     </div>
-    <div class="cat-row">
-      ${pills}
-      <button class="cat-add-pill" onclick="addCategory()">＋ 新增分類</button>
-    </div>
-    ${cards}
   `;
+}
+function selectAllInCategory(){
+  db.items.filter(it=>it.categoryId===currentCategory).forEach(it=>selectedIds.add(it.id));
+  renderAll();
+}
+function clearSelection(){
+  selectedIds.clear();
+  renderAll();
 }
 function cardBoxItem(it){
   const photo = it.photo
     ? `<img class="card-photo" src="${it.photo}">`
     : `<div class="card-photo placeholder">◇</div>`;
+  const checked = selectedIds.has(it.id) ? 'checked' : '';
+  const selCls = selectedIds.has(it.id) ? 'selected' : '';
   return `
-    <div class="card">
+    <div class="card ${selCls}">
+      <label class="card-select" onclick="event.stopPropagation()">
+        <input type="checkbox" ${checked} onchange="toggleSelect('${it.id}')">
+      </label>
       <div class="card-actions">
         <button class="icon-btn" onclick="openForm('item','${it.id}')">✎</button>
         <button class="icon-btn del" onclick="removeItem('item','${it.id}')">✕</button>
@@ -367,6 +435,7 @@ function cardBoxItem(it){
       <div class="row">購買金額：<b>${fmtMoney(it.price)}</b></div>
       <div class="row">大小／形狀：${esc(it.size)||'—'}</div>
     </div>`;
+
 }
 
 async function addCategory(){
@@ -399,10 +468,15 @@ async function deleteCategory(id){
   db.items = db.items.filter(it=>it.categoryId!==id);
   await Promise.all([saveKey('categories', db.categories), saveKey('items', db.items)]);
   currentCategory = db.categories.length ? db.categories[0].id : null;
+  selectedIds.clear();
   renderAll();
   toast('已刪除分類');
 }
-function setCategory(id){ currentCategory = id; renderAll(); }
+function setCategory(id){ currentCategory = id; selectedIds.clear(); renderAll(); }
+function toggleSelect(id){
+  if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+  renderAll();
+}
 
 /* ---------- forms ---------- */
 const SCHEMAS = {
