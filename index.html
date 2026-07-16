@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="水晶藏寶箱">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=cwTeX+Q+Kai&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
 
 :root{
   --bg:#CADDDD;
@@ -27,7 +27,7 @@
   --citrine:#2C4E54;
   --danger:#B5615A;
   --btn-text:#1D3A38;
-  --font-hand:'Ma Shan Zheng','Noto Serif TC',cursive;
+  --font-hand:'cwTeX Q Kai','Noto Serif TC',serif;
 }
 
 *{box-sizing:border-box;}
@@ -88,11 +88,11 @@ body{
 .stats b{color:var(--citrine);font-weight:600;}
 
 .add-btn{
-  background:var(--surface2);border:1px solid var(--amethyst);color:var(--amethyst);
+  background:var(--surface2);border:1px solid var(--citrine);color:var(--citrine);
   padding:9px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;
   white-space:nowrap;transition:.2s;
 }
-.add-btn:hover{background:var(--amethyst);color:var(--btn-text);}
+.add-btn:hover{background:var(--citrine);color:#F3F8F6;}
 
 /* browser-tab style category selector for 我的藏寶箱 */
 .cat-tabstrip{margin-bottom:0;}
@@ -431,9 +431,6 @@ function cardBoxItem(it){
   const selCls = selectedIds.has(it.id) ? 'selected' : '';
   return `
     <div class="card has-bottom-actions ${selCls}">
-      <div class="card-actions">
-        <button class="icon-btn" onclick="openForm('item','${it.id}')">✎</button>
-      </div>
       ${photo}
       <h3>${esc(it.type)}</h3>
       <div class="row">購買日期：${fmtDate(it.date)}</div>
@@ -443,6 +440,7 @@ function cardBoxItem(it){
         <label class="card-select" onclick="event.stopPropagation()">
           <input type="checkbox" ${checked} onchange="toggleSelect('${it.id}')">
         </label>
+        <button class="icon-btn" onclick="openForm('item','${it.id}')">✎</button>
         <button class="icon-btn del" onclick="removeItem('item','${it.id}')">✕</button>
       </div>
     </div>`;
