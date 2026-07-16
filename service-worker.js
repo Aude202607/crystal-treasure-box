@@ -1,4 +1,4 @@
-const CACHE_NAME = 'crystal-treasure-box-v7';
+const CACHE_NAME = 'crystal-treasure-box-v8';
 const ASSETS = [
   './',
   './index.html',
