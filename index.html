@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>水晶藏寶箱</title>
 <meta name="description" content="水晶家族圖鑑與我的藏寶箱收藏紀錄">
-<meta name="theme-color" content="#B6CFD0">
+<meta name="theme-color" content="#CADDDD">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -13,27 +13,28 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="水晶藏寶箱">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#B6CFD0;
-  --surface:#A7BDB1;
-  --surface2:#B4C9BD;
-  --border:#7E9A8D;
-  --text:#4F868E;
-  --text-muted:#729499;
+  --bg:#CADDDD;
+  --surface:#C0D1C6;
+  --surface2:#CBDACF;
+  --border:#8FA89C;
+  --text:#345960;
+  --text-muted:#5E8890;
   --amethyst:#92ACA0;
   --rose:#7FA69B;
-  --citrine:#3F6B71;
+  --citrine:#2C4E54;
   --danger:#B5615A;
   --btn-text:#1D3A38;
+  --font-hand:'Ma Shan Zheng','Noto Serif TC',cursive;
 }
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   font-family:'Inter','Noto Serif TC',sans-serif;
-  background:radial-gradient(ellipse at top, #C7DCDA 0%, #B6CFD0 55%);
+  background:radial-gradient(ellipse at top, #D8E7E6 0%, #CADDDD 55%);
   color:var(--text);
   min-height:100vh;
 }
@@ -41,7 +42,7 @@ body{
 
 .masthead{text-align:center;margin-bottom:24px;}
 .masthead h1{
-  font-family:'Cinzel','Noto Serif TC',serif;
+  font-family:var(--font-hand),'Noto Serif TC',serif;
   font-weight:700;
   font-size:clamp(26px,4vw,38px);
   letter-spacing:1px;
@@ -55,7 +56,7 @@ body{
 
 .main-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
 .main-tab-btn{
-  font-family:'Cinzel','Noto Serif TC',serif;
+  font-family:var(--font-hand),'Noto Serif TC',serif;
   background:var(--surface);
   border:1px solid var(--border);
   color:var(--text-muted);
@@ -81,7 +82,7 @@ body{
   display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;
   margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:14px;
 }
-.panel-head h2{font-family:'Cinzel','Noto Serif TC',serif;margin:0 0 4px;font-size:22px;letter-spacing:1px;}
+.panel-head h2{font-family:var(--font-hand),'Noto Serif TC',serif;margin:0 0 4px;font-size:22px;letter-spacing:1px;}
 .panel-head .desc{color:var(--text-muted);font-size:13px;}
 .stats{display:flex;gap:18px;font-size:13px;color:var(--text-muted);}
 .stats b{color:var(--citrine);font-weight:600;}
@@ -105,10 +106,11 @@ body{
   border:1px solid var(--border);
   border-bottom:none;
   border-radius:10px 10px 0 0;
-  padding:10px 10px 10px 16px;
+  padding:11px 12px 11px 18px;
   color:var(--text-muted);
   cursor:pointer;
-  font-size:13.5px;
+  font-family:var(--font-hand),'Noto Serif TC',serif;
+  font-size:19px;
   transition:.15s;
 }
 .cat-tab:hover{color:var(--text);}
@@ -118,17 +120,19 @@ body{
   border-color:var(--amethyst);
   border-bottom:1px solid var(--surface);
   margin-bottom:-1px;
-  font-weight:600;
+  font-weight:700;
 }
 .cat-tab .cat-edit{
   width:20px;height:20px;border-radius:5px;border:none;background:transparent;color:var(--text-muted);
   font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;
 }
-.cat-tab .cat-edit:hover{color:var(--text);background:rgba(255,255,255,.08);}
+.cat-tab .cat-edit:hover{color:var(--text);background:rgba(255,255,255,.3);}
 .cat-tab-add{
   background:transparent;border:1px dashed var(--border);border-bottom:1px dashed var(--border);
   color:var(--text-muted);border-radius:10px 10px 0 0;
-  padding:10px 16px;cursor:pointer;font-size:13.5px;align-self:flex-end;
+  padding:10px 16px;cursor:pointer;font-size:15px;align-self:flex-end;
+  font-family:var(--font-hand),'Noto Serif TC',serif;
 }
 .cat-tab-add:hover{border-color:var(--amethyst);color:var(--amethyst);}
 .cat-tab-panel{
@@ -146,10 +150,14 @@ body{
   padding:14px;position:relative;transition:.2s;
 }
 .card:hover{border-color:var(--amethyst);transform:translateY(-2px);}
+.card.has-bottom-actions{padding-bottom:44px;}
 
 .card.selected{border-color:var(--amethyst);box-shadow:0 0 0 1px var(--amethyst) inset;}
+.card-actions-bottom{
+  position:absolute;bottom:10px;right:10px;z-index:2;
+  display:flex;align-items:center;gap:8px;
+}
 .card-select{
-  position:absolute;top:10px;left:10px;z-index:2;
   width:22px;height:22px;display:flex;align-items:center;justify-content:center;
 }
 .card-select input{width:18px;height:18px;accent-color:var(--amethyst);cursor:pointer;}
@@ -168,7 +176,7 @@ body{
   background:var(--surface2);margin-bottom:10px;display:block;
 }
 .card-photo.placeholder{display:flex;align-items:center;justify-content:center;color:var(--border);font-size:32px;}
-.card h3{font-family:'Noto Serif TC',serif;font-size:16px;margin:0 0 6px;color:var(--text);}
+.card h3{font-family:var(--font-hand),'Noto Serif TC',serif;font-size:19px;margin:0 0 6px;color:var(--text);}
 .card .row{font-size:12.5px;color:var(--text-muted);margin:2px 0;}
 .card .row b{color:var(--citrine);font-weight:600;}
 .card-actions{position:absolute;top:10px;right:10px;display:flex;gap:6px;}
@@ -195,7 +203,7 @@ body{
   background:var(--surface);border:1px solid var(--border);border-radius:14px;
   padding:26px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;
 }
-.modal h3{font-family:'Cinzel','Noto Serif TC',serif;margin:0 0 18px;font-size:18px;letter-spacing:1px;}
+.modal h3{font-family:var(--font-hand),'Noto Serif TC',serif;margin:0 0 18px;font-size:18px;letter-spacing:1px;}
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:12.5px;color:var(--text-muted);margin-bottom:6px;}
 .field input,.field select,.field textarea{
@@ -422,19 +430,21 @@ function cardBoxItem(it){
   const checked = selectedIds.has(it.id) ? 'checked' : '';
   const selCls = selectedIds.has(it.id) ? 'selected' : '';
   return `
-    <div class="card ${selCls}">
-      <label class="card-select" onclick="event.stopPropagation()">
-        <input type="checkbox" ${checked} onchange="toggleSelect('${it.id}')">
-      </label>
+    <div class="card has-bottom-actions ${selCls}">
       <div class="card-actions">
         <button class="icon-btn" onclick="openForm('item','${it.id}')">✎</button>
-        <button class="icon-btn del" onclick="removeItem('item','${it.id}')">✕</button>
       </div>
       ${photo}
       <h3>${esc(it.type)}</h3>
       <div class="row">購買日期：${fmtDate(it.date)}</div>
       <div class="row">購買金額：<b>${fmtMoney(it.price)}</b></div>
       <div class="row">大小／形狀：${esc(it.size)||'—'}</div>
+      <div class="card-actions-bottom">
+        <label class="card-select" onclick="event.stopPropagation()">
+          <input type="checkbox" ${checked} onchange="toggleSelect('${it.id}')">
+        </label>
+        <button class="icon-btn del" onclick="removeItem('item','${it.id}')">✕</button>
+      </div>
     </div>`;
 
 }
