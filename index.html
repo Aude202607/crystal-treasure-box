@@ -194,6 +194,38 @@ body{
 }
 .empty .add-btn{margin-top:14px;}
 
+/* chakra tags */
+.chakra-filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chakra-picker{display:flex;flex-wrap:wrap;gap:8px;}
+.chakra-chip{
+  --chip-color:var(--citrine);
+  border:1.5px solid var(--chip-color);
+  color:var(--chip-color);
+  background:transparent;
+  border-radius:999px;
+  padding:7px 15px;
+  font-size:14px;
+  cursor:pointer;
+  transition:.15s;
+  font-weight:500;
+}
+.chakra-chip.filter.active,.chakra-chip.filter:hover{background:var(--chip-color);color:#F5F8F7;}
+.chakra-chip.picker.active{background:var(--chip-color);color:#F5F8F7;font-weight:700;}
+.chakra-chip.small{
+  display:inline-block;
+  border:1.5px solid var(--chip-color);
+  color:var(--chip-color);
+  background:transparent;
+  border-radius:999px;
+  padding:2px 11px;
+  font-size:13px;
+  margin:2px 4px 2px 0;
+  cursor:default;
+  font-weight:500;
+}
+.chakra-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px;}
+.chakra-tag-list{display:inline-flex;flex-wrap:wrap;gap:4px;}
+
 .overlay{
   display:none;position:fixed;inset:0;background:rgba(50,68,63,.45);
   backdrop-filter:blur(3px);align-items:center;justify-content:center;z-index:50;padding:20px;
@@ -285,14 +317,28 @@ async function saveKey(key, arr){
 }
 
 /* ---------- app state ---------- */
-// db.family: [{id,name,sciName,origin,func}]
+// db.family: [{id,name,chakras:[],origin,func}]
 // db.categories: [{id,name}]  -- user-defined categories in 我的藏寶箱
 // db.items: [{id,categoryId,type,date,price,size,photo}]
+const CHAKRAS = [
+  {key:'root', label:'海底輪', color:'#B5615A'},
+  {key:'sacral', label:'臍輪', color:'#C98A4B'},
+  {key:'solar', label:'太陽神經叢輪', color:'#C9B34B'},
+  {key:'heart', label:'心輪', color:'#6FA05E'},
+  {key:'throat', label:'喉輪', color:'#4F86A8'},
+  {key:'thirdEye', label:'眉心輪', color:'#5C6FB5'},
+  {key:'crown', label:'頂輪', color:'#8A6FB5'}
+];
+function chakraLabel(key){ const c=CHAKRAS.find(c=>c.key===key); return c?c.label:key; }
+function chakraColor(key){ const c=CHAKRAS.find(c=>c.key===key); return c?c.color:'#8FA89C'; }
+
 let db = { family:[], categories:[], items:[] };
 let currentMain = 'family';
 let currentCategory = null;
+let currentChakraFilter = null;
 let editing = null;
 let selectedIds = new Set();
+let pendingChakras = [];
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function fmtMoney(n){ if(n===undefined||n===null||n==='') return '—'; return 'NT$ '+Number(n).toLocaleString(); }
@@ -333,18 +379,39 @@ function renderAll(){
 
 /* ---------- 水晶家族 ---------- */
 function renderFamily(){
-  const items = db.family;
-  const cards = items.length ? `<div class="grid">${items.map(cardFamily).join('')}</div>`
-    : `<div class="empty">還沒有水晶家族資料，點右上角「新增」開始建立水晶圖鑑。</div>`;
+  const filtered = currentChakraFilter
+    ? db.family.filter(it=>(it.chakras||[]).includes(currentChakraFilter))
+    : db.family;
+
+  const filterBar = `
+    <div class="chakra-filter-bar">
+      <button class="chakra-chip filter ${!currentChakraFilter?'active':''}" onclick="setChakraFilter(null)">全部</button>
+      ${CHAKRAS.map(c=>`
+        <button class="chakra-chip filter ${currentChakraFilter===c.key?'active':''}" style="--chip-color:${c.color}" onclick="setChakraFilter('${c.key}')">${c.label}</button>
+      `).join('')}
+    </div>
+  `;
+
+  const cards = filtered.length ? `<div class="grid">${filtered.map(cardFamily).join('')}</div>`
+    : (db.family.length
+        ? `<div class="empty">「${chakraLabel(currentChakraFilter)}」還沒有對應的水晶。</div>`
+        : `<div class="empty">還沒有水晶家族資料，點右上角「新增」開始建立水晶圖鑑。</div>`);
+
   return `
     <div class="panel-head">
-      <div><h2>水晶家族</h2><div class="desc">名稱・學名・產地・功能</div></div>
+      <div><h2>水晶家族</h2><div class="desc">名稱・脈輪・產地・功能</div></div>
       <button class="add-btn" onclick="openForm('family')">＋ 新增水晶</button>
     </div>
+    ${filterBar}
     ${cards}
   `;
 }
+function setChakraFilter(key){ currentChakraFilter = key; renderAll(); }
 function cardFamily(it){
+  const chakras = it.chakras||[];
+  const chakraTags = chakras.length
+    ? chakras.map(k=>`<span class="chakra-chip small" style="--chip-color:${chakraColor(k)}">${chakraLabel(k)}</span>`).join('')
+    : '—';
   return `
     <div class="card">
       <div class="card-actions">
@@ -352,9 +419,9 @@ function cardFamily(it){
         <button class="icon-btn del" onclick="removeItem('family','${it.id}')">✕</button>
       </div>
       <h3>${esc(it.name)}</h3>
-      <div class="row">學名：${esc(it.sciName)||'—'}</div>
       <div class="row">產地：${esc(it.origin)||'—'}</div>
       <div class="row">功能：${esc(it.func)||'—'}</div>
+      <div class="row chakra-row">脈輪：<span class="chakra-tag-list">${chakraTags}</span></div>
     </div>`;
 }
 
@@ -493,7 +560,7 @@ const SCHEMAS = {
     title: {add:'新增水晶', edit:'編輯水晶'},
     fields: [
       {key:'name', label:'水晶名稱', type:'text', required:true},
-      {key:'sciName', label:'學名', type:'text'},
+      {key:'chakras', label:'脈輪（可複選）', type:'chakra-multiselect'},
       {key:'origin', label:'產地', type:'text'},
       {key:'func', label:'功能／功效', type:'textarea'}
     ]
@@ -518,6 +585,7 @@ function openForm(section, id){
   const listKey = section==='family' ? 'family' : 'items';
   const item = id ? db[listKey].find(x=>x.id===id) : {};
   pendingPhoto = item && item.photo ? item.photo : null;
+  pendingChakras = (item && item.chakras) ? [...item.chakras] : [];
 
   const fieldsHtml = schema.fields.map(f=>{
     const val = item ? (item[f.key] ?? '') : '';
@@ -530,6 +598,13 @@ function openForm(section, id){
         <input type="file" accept="image/*" data-key="photo" onchange="handlePhoto(event)">
         <img id="photoPreview" class="photo-preview" ${preview}>
       </div>`;
+    }
+    if(f.type==='chakra-multiselect'){
+      const chips = CHAKRAS.map(c=>`
+        <button type="button" class="chakra-chip picker ${pendingChakras.includes(c.key)?'active':''}"
+          id="chakraChip-${c.key}" style="--chip-color:${c.color}" onclick="toggleChakra('${c.key}')">${c.label}</button>
+      `).join('');
+      return `<div class="field"><label>${f.label}</label><div class="chakra-picker" id="chakraPicker">${chips}</div></div>`;
     }
     return `<div class="field"><label>${f.label}</label><input type="${f.type}" data-key="${f.key}" value="${esc(val)}" ${f.required?'required':''}></div>`;
   }).join('');
@@ -547,7 +622,14 @@ function openForm(section, id){
 function closeForm(){
   document.getElementById('overlay').classList.remove('active');
   pendingPhoto = null;
+  pendingChakras = [];
   editing = null;
+}
+function toggleChakra(key){
+  if(pendingChakras.includes(key)) pendingChakras = pendingChakras.filter(k=>k!==key);
+  else pendingChakras.push(key);
+  const chip = document.getElementById('chakraChip-'+key);
+  if(chip) chip.classList.toggle('active', pendingChakras.includes(key));
 }
 
 function handlePhoto(e){
@@ -590,6 +672,7 @@ async function submitForm(){
   });
   if(missingRequired){ toast('請填寫必填欄位'); return; }
   if(schema.fields.some(f=>f.type==='photo')){ data.photo = pendingPhoto || null; }
+  if(schema.fields.some(f=>f.type==='chakra-multiselect')){ data.chakras = [...pendingChakras]; }
   if(section==='item' && !id){ data.categoryId = currentCategory; }
 
   if(id){
