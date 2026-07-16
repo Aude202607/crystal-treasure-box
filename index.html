@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>水晶藏寶箱</title>
 <meta name="description" content="水晶家族圖鑑與我的藏寶箱收藏紀錄">
-<meta name="theme-color" content="#1b1420">
+<meta name="theme-color" content="#B6CFD0">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -16,23 +16,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Serif+TC:wght@500;700&family=Inter:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#0d1e1c;
-  --surface:#153029;
-  --surface2:#1c3d34;
-  --border:#2b4d44;
-  --text:#eaf5f0;
-  --text-muted:#8fb3a8;
-  --amethyst:#2f9e8e;
-  --rose:#5fc9c0;
-  --citrine:#8be6c9;
-  --danger:#e08a7a;
+  --bg:#B6CFD0;
+  --surface:#A7BDB1;
+  --surface2:#B4C9BD;
+  --border:#7E9A8D;
+  --text:#4F868E;
+  --text-muted:#729499;
+  --amethyst:#92ACA0;
+  --rose:#7FA69B;
+  --citrine:#3F6B71;
+  --danger:#B5615A;
+  --btn-text:#1D3A38;
 }
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   font-family:'Inter','Noto Serif TC',sans-serif;
-  background:radial-gradient(ellipse at top, #163732 0%, #0d1e1c 55%);
+  background:radial-gradient(ellipse at top, #C7DCDA 0%, #B6CFD0 55%);
   color:var(--text);
   min-height:100vh;
 }
@@ -68,7 +69,7 @@ body{
 .main-tab-btn:hover{color:var(--text);border-color:var(--amethyst);}
 .main-tab-btn.active{
   background:linear-gradient(120deg,var(--amethyst),var(--rose));
-  color:#1b1420;
+  color:var(--btn-text);
   border-color:transparent;
   font-weight:600;
 }
@@ -90,7 +91,7 @@ body{
   padding:9px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;
   white-space:nowrap;transition:.2s;
 }
-.add-btn:hover{background:var(--amethyst);color:#1b1420;}
+.add-btn:hover{background:var(--amethyst);color:var(--btn-text);}
 
 /* browser-tab style category selector for 我的藏寶箱 */
 .cat-tabstrip{margin-bottom:0;}
@@ -172,7 +173,7 @@ body{
 .card .row b{color:var(--citrine);font-weight:600;}
 .card-actions{position:absolute;top:10px;right:10px;display:flex;gap:6px;}
 .icon-btn{
-  background:rgba(27,20,32,.75);border:1px solid var(--border);color:var(--text-muted);
+  background:rgba(255,255,255,.55);border:1px solid var(--border);color:var(--text-muted);
   width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:12px;
   display:flex;align-items:center;justify-content:center;
 }
@@ -186,7 +187,7 @@ body{
 .empty .add-btn{margin-top:14px;}
 
 .overlay{
-  display:none;position:fixed;inset:0;background:rgba(10,7,13,.7);
+  display:none;position:fixed;inset:0;background:rgba(50,68,63,.45);
   backdrop-filter:blur(3px);align-items:center;justify-content:center;z-index:50;padding:20px;
 }
 .overlay.active{display:flex;}
@@ -206,7 +207,7 @@ body{
 .photo-preview{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 .btn{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:14px;}
-.btn.primary{background:linear-gradient(120deg,var(--amethyst),var(--rose));color:#1b1420;}
+.btn.primary{background:linear-gradient(120deg,var(--amethyst),var(--rose));color:var(--btn-text);}
 .btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
 .toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
